@@ -1,2261 +1,323 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>atelier vault • 2.0 tb private phone media hub</title>
-  
-  <!-- Embedded Lucide Icons Script -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <style>
-    /* ==========================================================================
-       LUXURY PALETTE DESIGN SYSTEM & BESPOKE TIMES NEW ROMAN TYPOGRAPHY
-       Palette:
-         - Deep Merlot: #4A0404
-         - Lighter Red / Crimson: #9D2525
-         - Cream: #F5EBE0
-         - Tan: #DBC1AC
-         - Light Brown: #A37C5B
-         - Obsidian / Deep Base: #1f0202
-       ========================================================================== */
-    :root {
-      --merlot-deep: #4A0404;
-      --merlot-dark: #2f0202;
-      --merlot-base: #1b0202;
-      --merlot-surface: #380303;
-      --crimson-accent: #9D2525;
-      --crimson-hover: #b82d2d;
-      --cream: #F5EBE0;
-      --cream-dim: rgba(245, 235, 224, 0.72);
-      --cream-faint: rgba(245, 235, 224, 0.12);
-      --tan: #DBC1AC;
-      --tan-border: rgba(219, 193, 172, 0.28);
-      --tan-subtle: rgba(219, 193, 172, 0.12);
-      --light-brown: #A37C5B;
-      --font-editorial: 'Times New Roman', Times, Georgia, serif;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background: radial-gradient(circle at 10% 10%, #300303 0%, #170101 60%, #0d0101 100%);
-      color: var(--cream);
-      font-family: var(--font-editorial);
-      font-size: 15px;
-      line-height: 1.5;
-      min-height: 100vh;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* Custom Luxury Scrollbars */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: var(--merlot-base);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--light-brown);
-      border-radius: 3px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--tan);
-    }
-
-    /* Subtle fine-line border utility */
-    .hairline-border {
-      border: 1px solid var(--tan-border);
-    }
-
-    /* Header styling */
-    header {
-      background: rgba(47, 2, 2, 0.88);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--tan-border);
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      padding: 0.9rem 1.8rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1.5rem;
-    }
-
-    .brand-section {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .brand-crest {
-      width: 38px;
-      height: 38px;
-      border: 1px solid var(--tan);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, var(--merlot-deep), var(--crimson-accent));
-      color: var(--cream);
-      box-shadow: 0 4px 15px rgba(157, 37, 37, 0.35);
-      flex-shrink: 0;
-    }
-
-    .brand-titles h1 {
-      font-size: 1.15rem;
-      font-weight: 400;
-      letter-spacing: 0.15em;
-      text-transform: lowercase;
-      color: var(--cream);
-      line-height: 1.1;
-    }
-
-    .brand-titles p {
-      font-size: 0.72rem;
-      color: var(--tan);
-      letter-spacing: 0.2em;
-      text-transform: lowercase;
-      font-style: italic;
-    }
-
-    .search-bar-wrap {
-      flex: 1;
-      max-width: 440px;
-      position: relative;
-    }
-
-    .search-input {
-      width: 100%;
-      background: rgba(31, 2, 2, 0.85);
-      border: 1px solid var(--tan-border);
-      color: var(--cream);
-      font-family: var(--font-editorial);
-      font-size: 0.88rem;
-      font-style: italic;
-      padding: 0.55rem 2.4rem 0.55rem 1rem;
-      border-radius: 4px;
-      transition: all 0.25s ease;
-    }
-    .search-input:focus {
-      outline: none;
-      border-color: var(--tan);
-      background: rgba(45, 3, 3, 0.95);
-      box-shadow: 0 0 16px rgba(219, 193, 172, 0.15);
-    }
-    .search-icon {
-      position: absolute;
-      right: 0.8rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--tan);
-      pointer-events: none;
-      width: 16px;
-      height: 16px;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-    }
-
-    /* Elegant Buttons */
-    .btn-luxury {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-family: var(--font-editorial);
-      font-size: 0.82rem;
-      letter-spacing: 0.14em;
-      text-transform: lowercase;
-      color: var(--cream);
-      background: linear-gradient(135deg, var(--crimson-accent), var(--merlot-deep));
-      border: 1px solid var(--tan);
-      padding: 0.55rem 1.1rem;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      box-shadow: 0 3px 12px rgba(74, 4, 4, 0.4);
-      text-decoration: none;
-    }
-    .btn-luxury:hover {
-      background: linear-gradient(135deg, var(--crimson-hover), #610707);
-      transform: translateY(-1px);
-      box-shadow: 0 5px 18px rgba(157, 37, 37, 0.45);
-    }
-
-    .btn-outline {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-family: var(--font-editorial);
-      font-size: 0.8rem;
-      letter-spacing: 0.12em;
-      text-transform: lowercase;
-      color: var(--tan);
-      background: rgba(31, 2, 2, 0.5);
-      border: 1px solid var(--tan-border);
-      padding: 0.5rem 0.95rem;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .btn-outline:hover {
-      border-color: var(--tan);
-      color: var(--cream);
-      background: var(--merlot-surface);
-    }
-
-    /* Layout structure */
-    .app-body {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* Left Sidebar: 2.0 TB Metrics, Device status & Albums */
-    .sidebar {
-      width: 340px;
-      background: rgba(37, 3, 3, 0.92);
-      border-right: 1px solid var(--tan-border);
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      overflow-y: auto;
-      padding: 1.6rem 1.4rem;
-      gap: 1.8rem;
-    }
-
-    /* 2.0 TB Metric Showcase */
-    .storage-card {
-      background: linear-gradient(180deg, #3d0505 0%, #260202 100%);
-      border: 1px solid var(--tan-border);
-      border-radius: 6px;
-      padding: 1.3rem;
-      box-shadow: 0 8px 24px rgba(27, 2, 2, 0.6);
-      position: relative;
-    }
-
-    .storage-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 0.5rem;
-    }
-
-    .storage-tag {
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: lowercase;
-      color: var(--tan);
-      font-style: italic;
-    }
-
-    .storage-quota-badge {
-      font-size: 0.68rem;
-      letter-spacing: 0.15em;
-      color: var(--cream);
-      background: var(--merlot-deep);
-      border: 1px solid var(--tan-border);
-      padding: 0.15rem 0.5rem;
-      border-radius: 2px;
-    }
-
-    .storage-large-num {
-      display: flex;
-      align-items: baseline;
-      gap: 0.4rem;
-      margin: 0.4rem 0 0.8rem 0;
-    }
-
-    .storage-large-num .amount {
-      font-size: 2.2rem;
-      font-weight: 400;
-      color: var(--cream);
-      letter-spacing: 0.05em;
-    }
-
-    .storage-large-num .total {
-      font-size: 0.9rem;
-      color: var(--tan);
-      font-style: italic;
-      letter-spacing: 0.08em;
-    }
-
-    /* Multi-Segment Capacity Bar */
-    .capacity-track {
-      height: 9px;
-      background: #140101;
-      border: 1px solid var(--tan-border);
-      border-radius: 2px;
-      display: flex;
-      overflow: hidden;
-      margin: 0.6rem 0;
-      gap: 1px;
-    }
-
-    .segment-bar {
-      height: 100%;
-      transition: width 0.4s ease;
-    }
-    .seg-raw { background: #DBC1AC; } /* Tan: RAW */
-    .seg-video { background: #9D2525; } /* Crimson: 4K */
-    .seg-backup { background: #A37C5B; } /* Light Brown: Backups */
-
-    .capacity-legend {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: var(--tan);
-      letter-spacing: 0.08em;
-      margin-top: 0.4rem;
-      font-style: italic;
-    }
-
-    .category-breakdown {
-      margin-top: 1.1rem;
-      border-top: 1px solid var(--tan-subtle);
-      padding-top: 0.9rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.55rem;
-    }
-
-    .category-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.8rem;
-    }
-
-    .category-name {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--cream-dim);
-      letter-spacing: 0.05em;
-    }
-
-    .cat-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    .category-val {
-      color: var(--cream);
-      letter-spacing: 0.08em;
-      font-size: 0.78rem;
-    }
-
-    /* Phone Status Card */
-    .phone-sync-card {
-      background: rgba(31, 2, 2, 0.7);
-      border: 1px solid var(--tan-border);
-      border-radius: 5px;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .phone-sync-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .phone-meta {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-    }
-
-    .phone-icon-box {
-      width: 32px;
-      height: 32px;
-      border-radius: 4px;
-      background: var(--merlot-deep);
-      border: 1px solid var(--tan-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--tan);
-    }
-
-    .phone-texts h4 {
-      font-size: 0.86rem;
-      font-weight: 400;
-      color: var(--cream);
-      letter-spacing: 0.08em;
-      text-transform: lowercase;
-    }
-
-    .phone-texts p {
-      font-size: 0.7rem;
-      color: var(--tan);
-      letter-spacing: 0.1em;
-      font-style: italic;
-    }
-
-    .status-pulse {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.7rem;
-      color: #9D2525;
-      letter-spacing: 0.1em;
-      font-style: italic;
-    }
-    .status-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--crimson-accent);
-      border-radius: 50%;
-      box-shadow: 0 0 8px #9D2525;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
-    }
-
-    /* Album Navigation */
-    .nav-group-title {
-      font-size: 0.72rem;
-      color: var(--tan);
-      letter-spacing: 0.22em;
-      text-transform: lowercase;
-      font-style: italic;
-      margin-bottom: 0.6rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .album-nav {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-
-    .album-btn {
-      width: 100%;
-      background: transparent;
-      border: none;
-      border-radius: 3px;
-      color: var(--cream-dim);
-      font-family: var(--font-editorial);
-      font-size: 0.88rem;
-      letter-spacing: 0.09em;
-      text-transform: lowercase;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.5rem 0.7rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: left;
-    }
-
-    .album-btn:hover {
-      background: var(--merlot-surface);
-      color: var(--cream);
-    }
-
-    .album-btn.active {
-      background: linear-gradient(90deg, rgba(157, 37, 37, 0.4) 0%, rgba(74, 4, 4, 0.2) 100%);
-      color: var(--cream);
-      border-left: 2px solid var(--tan);
-    }
-
-    .album-badge {
-      font-size: 0.72rem;
-      color: var(--tan);
-      letter-spacing: 0.05em;
-      font-style: italic;
-    }
-
-    /* Main Content Area */
-    .main-gallery {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      background: rgba(22, 1, 1, 0.95);
-    }
-
-    /* Drag & Drop Hero Atelier Box */
-    .drop-banner {
-      padding: 1.5rem 2rem 0.5rem 2rem;
-    }
-
-    .dropzone-box {
-      border: 1px dashed var(--tan-border);
-      border-radius: 5px;
-      background: linear-gradient(135deg, rgba(74, 4, 4, 0.3) 0%, rgba(31, 2, 2, 0.5) 100%);
-      padding: 1.8rem 1.5rem;
-      text-align: center;
-      cursor: pointer;
-      position: relative;
-      transition: all 0.3s ease;
-    }
-    .dropzone-box:hover, .dropzone-box.dragover {
-      border-color: var(--tan);
-      background: linear-gradient(135deg, rgba(157, 37, 37, 0.25) 0%, rgba(74, 4, 4, 0.45) 100%);
-      box-shadow: 0 0 25px rgba(219, 193, 172, 0.12);
-    }
-
-    .dropzone-icon {
-      width: 44px;
-      height: 44px;
-      margin: 0 auto 0.7rem auto;
-      border: 1px solid var(--tan-border);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--tan);
-      background: rgba(31, 2, 2, 0.6);
-    }
-
-    .dropzone-title {
-      font-size: 1.05rem;
-      font-weight: 400;
-      color: var(--cream);
-      letter-spacing: 0.12em;
-      text-transform: lowercase;
-    }
-
-    .dropzone-sub {
-      font-size: 0.78rem;
-      color: var(--tan);
-      letter-spacing: 0.1em;
-      font-style: italic;
-      margin-top: 0.25rem;
-    }
-
-    /* Gallery Controls Header */
-    .gallery-toolbar {
-      padding: 1.2rem 2rem;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      border-bottom: 1px solid var(--tan-border);
-      background: rgba(27, 2, 2, 0.9);
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      backdrop-filter: blur(8px);
-    }
-
-    .filter-pills {
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-    }
-
-    .pill-btn {
-      font-family: var(--font-editorial);
-      font-size: 0.78rem;
-      letter-spacing: 0.12em;
-      text-transform: lowercase;
-      color: var(--tan);
-      background: rgba(47, 2, 2, 0.7);
-      border: 1px solid var(--tan-border);
-      padding: 0.35rem 0.85rem;
-      border-radius: 2px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .pill-btn:hover {
-      color: var(--cream);
-      border-color: var(--tan);
-    }
-    .pill-btn.active {
-      background: var(--merlot-deep);
-      color: var(--cream);
-      border-color: var(--tan);
-      box-shadow: 0 2px 8px rgba(74, 4, 4, 0.4);
-    }
-
-    .toolbar-tools {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
-
-    .selection-banner {
-      font-size: 0.78rem;
-      color: var(--tan);
-      font-style: italic;
-      letter-spacing: 0.08em;
-    }
-
-    .view-mode-toggle {
-      display: flex;
-      border: 1px solid var(--tan-border);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .view-mode-btn {
-      background: rgba(31, 2, 2, 0.8);
-      border: none;
-      color: var(--tan);
-      padding: 0.35rem 0.65rem;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-      display: flex;
-      align-items: center;
-    }
-    .view-mode-btn.active {
-      background: var(--crimson-accent);
-      color: var(--cream);
-    }
-
-    /* Media Containers */
-    .gallery-container {
-      padding: 1.8rem 2rem 4rem 2rem;
-      flex: 1;
-    }
-
-    /* Masonry / Editorial Grid */
-    .editorial-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1.4rem;
-    }
-
-    .media-card {
-      background: rgba(39, 3, 3, 0.8);
-      border: 1px solid var(--tan-border);
-      border-radius: 4px;
-      overflow: hidden;
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
-      display: flex;
-      flex-direction: column;
-    }
-    .media-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--tan);
-      box-shadow: 0 12px 28px rgba(10, 0, 0, 0.6);
-    }
-
-    .card-thumb-wrap {
-      aspect-ratio: 4/3;
-      width: 100%;
-      background: #120101;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card-thumb {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.6s ease;
-    }
-    .media-card:hover .card-thumb {
-      transform: scale(1.04);
-    }
-
-    .video-pill {
-      position: absolute;
-      top: 0.6rem;
-      left: 0.6rem;
-      background: rgba(20, 1, 1, 0.82);
-      border: 1px solid var(--tan-border);
-      color: var(--cream);
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      padding: 0.15rem 0.45rem;
-      border-radius: 2px;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      backdrop-filter: blur(4px);
-    }
-
-    .card-select-check {
-      position: absolute;
-      top: 0.6rem;
-      right: 0.6rem;
-      width: 20px;
-      height: 20px;
-      border-radius: 3px;
-      border: 1px solid var(--tan-border);
-      background: rgba(31, 2, 2, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      z-index: 5;
-    }
-    .card-select-check.checked {
-      background: var(--crimson-accent);
-      border-color: var(--tan);
-      color: var(--cream);
-    }
-
-    .card-caption {
-      padding: 0.85rem 0.95rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-      border-top: 1px solid var(--tan-subtle);
-      background: rgba(27, 2, 2, 0.92);
-    }
-
-    .caption-title {
-      font-size: 0.88rem;
-      font-weight: 400;
-      color: var(--cream);
-      letter-spacing: 0.08em;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-transform: lowercase;
-    }
-
-    .caption-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.72rem;
-      color: var(--tan);
-      font-style: italic;
-      letter-spacing: 0.06em;
-    }
-
-    /* Archive List View */
-    .editorial-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .list-row {
-      display: grid;
-      grid-template-columns: 32px 64px 2fr 1.2fr 1fr 1fr 40px;
-      align-items: center;
-      padding: 0.6rem 1rem;
-      background: rgba(35, 3, 3, 0.7);
-      border: 1px solid var(--tan-border);
-      border-radius: 3px;
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
-      font-size: 0.82rem;
-    }
-    .list-row:hover {
-      background: var(--merlot-surface);
-      border-color: var(--tan);
-    }
-
-    .list-thumb {
-      width: 48px;
-      height: 38px;
-      object-fit: cover;
-      border-radius: 2px;
-      border: 1px solid var(--tan-border);
-    }
-
-    /* Fullscreen Lightbox & Luxury EXIF Drawer */
-    .lightbox-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(14, 1, 1, 0.96);
-      backdrop-filter: blur(16px);
-      z-index: 100;
-      display: none;
-      flex-direction: column;
-    }
-    .lightbox-modal.active {
-      display: flex;
-    }
-
-    .lightbox-topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.8rem;
-      border-bottom: 1px solid var(--tan-border);
-      background: rgba(27, 2, 2, 0.95);
-    }
-
-    .lightbox-titles h3 {
-      font-size: 1.05rem;
-      font-weight: 400;
-      letter-spacing: 0.12em;
-      text-transform: lowercase;
-      color: var(--cream);
-    }
-
-    .lightbox-titles p {
-      font-size: 0.74rem;
-      color: var(--tan);
-      letter-spacing: 0.1em;
-      font-style: italic;
-    }
-
-    .lightbox-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
-
-    .lightbox-stage {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .stage-media-wrap {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      position: relative;
-    }
-
-    .stage-media-wrap img, .stage-media-wrap video {
-      max-width: 90%;
-      max-height: 82vh;
-      border: 1px solid var(--tan-border);
-      border-radius: 4px;
-      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.8);
-      object-fit: contain;
-    }
-
-    .stage-nav-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 1px solid var(--tan-border);
-      background: rgba(36, 2, 2, 0.75);
-      color: var(--tan);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      z-index: 10;
-    }
-    .stage-nav-btn:hover {
-      background: var(--crimson-accent);
-      color: var(--cream);
-      border-color: var(--tan);
-    }
-    .nav-prev { left: 1.5rem; }
-    .nav-next { right: 1.5rem; }
-
-    /* Metadata Atelier Drawer */
-    .metadata-drawer {
-      width: 340px;
-      background: rgba(30, 2, 2, 0.95);
-      border-left: 1px solid var(--tan-border);
-      overflow-y: auto;
-      padding: 1.6rem 1.4rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .drawer-section-title {
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
-      text-transform: lowercase;
-      color: var(--tan);
-      font-style: italic;
-      border-bottom: 1px solid var(--tan-subtle);
-      padding-bottom: 0.4rem;
-      margin-bottom: 0.8rem;
-    }
-
-    .exif-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-    }
-
-    .exif-box {
-      background: rgba(43, 3, 3, 0.6);
-      border: 1px solid var(--tan-border);
-      border-radius: 3px;
-      padding: 0.6rem 0.7rem;
-    }
-
-    .exif-label {
-      font-size: 0.68rem;
-      color: var(--tan);
-      letter-spacing: 0.12em;
-      font-style: italic;
-      display: block;
-      margin-bottom: 0.2rem;
-    }
-
-    .exif-value {
-      font-size: 0.82rem;
-      color: var(--cream);
-      letter-spacing: 0.05em;
-    }
-
-    /* Luxury Tethered Phone Sync Modal */
-    .sync-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(14, 1, 1, 0.85);
-      backdrop-filter: blur(12px);
-      z-index: 120;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-    }
-    .sync-modal.active {
-      display: flex;
-    }
-
-    .sync-dialog {
-      width: 100%;
-      max-width: 460px;
-      background: linear-gradient(180deg, #3d0505 0%, #200202 100%);
-      border: 1px solid var(--tan);
-      border-radius: 6px;
-      padding: 2rem;
-      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.9);
-      text-align: center;
-      position: relative;
-    }
-
-    .sync-crest {
-      width: 56px;
-      height: 56px;
-      margin: 0 auto 1.2rem auto;
-      border: 1px solid var(--tan);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--merlot-deep);
-      color: var(--tan);
-    }
-
-    .sync-dialog h3 {
-      font-size: 1.3rem;
-      font-weight: 400;
-      letter-spacing: 0.12em;
-      text-transform: lowercase;
-      color: var(--cream);
-      margin-bottom: 0.4rem;
-    }
-
-    .sync-dialog p {
-      font-size: 0.8rem;
-      color: var(--tan);
-      letter-spacing: 0.08em;
-      font-style: italic;
-      margin-bottom: 1.4rem;
-    }
-
-    .sync-progress-track {
-      height: 8px;
-      background: #120101;
-      border: 1px solid var(--tan-border);
-      border-radius: 2px;
-      overflow: hidden;
-      margin: 1rem 0;
-    }
-
-    .sync-progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--light-brown), var(--tan));
-      width: 0%;
-      transition: width 0.15s ease;
-    }
-
-    .sync-stats-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: var(--tan);
-      font-style: italic;
-      letter-spacing: 0.08em;
-    }
-
-    /* Batch action floating toolbar */
-    .batch-bar {
-      position: fixed;
-      bottom: 1.8rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: rgba(36, 2, 2, 0.95);
-      border: 1px solid var(--tan);
-      border-radius: 4px;
-      padding: 0.6rem 1.4rem;
-      display: flex;
-      align-items: center;
-      gap: 1.2rem;
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7);
-      z-index: 30;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .batch-bar.visible {
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* Notifications Toast */
-    .toast-tray {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      z-index: 150;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      pointer-events: none;
-    }
-
-    .toast-msg {
-      background: rgba(35, 2, 2, 0.94);
-      border: 1px solid var(--tan);
-      color: var(--cream);
-      padding: 0.75rem 1.2rem;
-      border-radius: 3px;
-      font-size: 0.8rem;
-      letter-spacing: 0.1em;
-      font-style: italic;
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-      transform: translateY(20px);
-      opacity: 0;
-      transition: all 0.3s ease;
-    }
-    .toast-msg.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    /* Responsive Queries */
-    @media (max-width: 900px) {
-      .sidebar {
-        display: none;
-      }
-      .gallery-container {
-        padding: 1rem 1rem 3rem 1rem;
-      }
-      .metadata-drawer {
-        position: absolute;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        z-index: 40;
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
-      }
-      .metadata-drawer.open {
-        transform: translateX(0);
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nimbus Vault · 2TB Storage Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0d17; --bg2:#11142a; --card:rgba(255,255,255,.05); --card-b:rgba(255,255,255,.09);
+  --text:#eef0ff; --muted:#8e93b8; --accent:#7c5cff; --accent2:#22d3ee; --accent3:#ff5fa2;
+  --glow:0 10px 40px -10px rgba(124,92,255,.6);
+  --r:20px;
+}
+[data-theme="light"]{
+  --bg:#f4f5fc; --bg2:#ffffff; --card:rgba(255,255,255,.8); --card-b:rgba(20,20,60,.08);
+  --text:#14163a; --muted:#6b7099; --glow:0 10px 30px -10px rgba(124,92,255,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+h1,h2,h3,.brand{font-family:Sora,sans-serif}
+.bg-orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.45;z-index:0;pointer-events:none}
+.o1{width:420px;height:420px;background:#6d4aff;top:-120px;left:-100px}
+.o2{width:380px;height:380px;background:#12b7d4;bottom:-140px;right:-80px}
+.o3{width:260px;height:260px;background:#ff4f9a;top:40%;left:55%;opacity:.22}
+[data-theme="light"] .bg-orb{opacity:.25}
+
+.app{position:relative;z-index:1;display:grid;grid-template-columns:260px 1fr;height:100vh}
+aside{padding:22px 16px;display:flex;flex-direction:column;gap:6px;border-right:1px solid var(--card-b);backdrop-filter:blur(20px);background:var(--card)}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:20px;padding:4px 10px 18px}
+.logo{width:38px;height:38px;border-radius:12px;background:conic-gradient(from 200deg,var(--accent),var(--accent2),var(--accent3),var(--accent));display:grid;place-items:center;box-shadow:var(--glow)}
+.logo svg{width:20px;height:20px}
+.upload{margin:4px 6px 14px;border:0;cursor:pointer;color:#fff;font:600 14px Sora;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,var(--accent),#a855f7 60%,var(--accent3));box-shadow:var(--glow);display:flex;gap:10px;align-items:center;justify-content:center;transition:.25s}
+.upload:hover{transform:translateY(-2px) scale(1.02)}
+nav a{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:14px;color:var(--muted);text-decoration:none;font-weight:500;font-size:14.5px;cursor:pointer;transition:.2s}
+nav a svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav a:hover{background:var(--card);color:var(--text)}
+nav a.active{background:linear-gradient(90deg,rgba(124,92,255,.28),rgba(34,211,238,.08));color:var(--text);box-shadow:inset 0 0 0 1px rgba(124,92,255,.35)}
+.side-storage{margin-top:auto;padding:16px;border-radius:18px;background:var(--card);border:1px solid var(--card-b)}
+.side-storage small{color:var(--muted);font-size:12px}
+.bar{height:8px;border-radius:99px;background:var(--card-b);overflow:hidden;margin:10px 0}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--accent2),var(--accent),var(--accent3));transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+.side-storage b{font-family:Sora;font-size:13px}
+
+main{overflow-y:auto;padding:0 32px 60px;scroll-behavior:smooth}
+header{position:sticky;top:0;z-index:5;display:flex;gap:16px;align-items:center;padding:20px 0;background:linear-gradient(var(--bg) 60%,transparent)}
+.search{flex:1;max-width:560px;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--card-b);padding:13px 18px;border-radius:18px;backdrop-filter:blur(16px);transition:.2s}
+.search:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px rgba(124,92,255,.18)}
+.search input{flex:1;border:0;outline:0;background:transparent;color:var(--text);font:15px Inter}
+.search svg{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2}
+.hdr-right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.icon-btn{width:44px;height:44px;border-radius:14px;border:1px solid var(--card-b);background:var(--card);color:var(--text);cursor:pointer;display:grid;place-items:center;transition:.2s}
+.icon-btn:hover{transform:translateY(-2px);border-color:var(--accent)}
+.icon-btn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.avatar{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#ff9a5f,var(--accent3));display:grid;place-items:center;font:700 15px Sora;color:#fff}
+
+.hero{display:grid;grid-template-columns:1.1fr 1.6fr;gap:22px;margin-top:6px}
+.card{background:var(--card);border:1px solid var(--card-b);border-radius:var(--r);padding:26px;backdrop-filter:blur(18px)}
+.ring-wrap{display:flex;align-items:center;gap:26px}
+.ring{position:relative;width:170px;height:170px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring .c b{font:700 30px Sora}
+.ring .c span{font-size:12px;color:var(--muted)}
+.ring-info h2{font-size:22px;margin-bottom:6px}
+.ring-info p{color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:14px}
+.pill{display:inline-flex;gap:8px;align-items:center;font:600 12px Sora;padding:8px 14px;border-radius:99px;background:rgba(124,92,255,.18);color:#b9a8ff;border:1px solid rgba(124,92,255,.35)}
+[data-theme="light"] .pill{color:#5b3fe0}
+.breakdown h3{font-size:16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+.breakdown h3 span{font:500 12px Inter;color:var(--muted)}
+.stack{display:flex;height:14px;border-radius:99px;overflow:hidden;gap:3px;margin-bottom:20px}
+.stack i{display:block;height:100%;width:0;transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+.legend{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.lg{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--card);border:1px solid var(--card-b);transition:.2s}
+.lg:hover{transform:translateY(-2px);border-color:var(--accent)}
+.lg .dot{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:16px}
+.lg b{display:block;font:600 14px Sora}
+.lg small{color:var(--muted);font-size:12px}
+
+section{margin-top:34px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sec-head h2{font-size:19px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:9px 16px;border-radius:99px;border:1px solid var(--card-b);background:var(--card);color:var(--muted);font:500 13px Inter;cursor:pointer;transition:.2s}
+.chip:hover{color:var(--text)}
+.chip.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent;box-shadow:var(--glow)}
+
+.albums{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
+.album{position:relative;height:200px;border-radius:22px;overflow:hidden;cursor:pointer;transition:.35s;isolation:isolate}
+.album:hover{transform:translateY(-6px) rotate(-.6deg);box-shadow:0 24px 50px -18px rgba(0,0,0,.6)}
+.album .shade{position:absolute;inset:0;background:linear-gradient(transparent 35%,rgba(0,0,0,.75))}
+.album .meta{position:absolute;left:16px;bottom:14px;color:#fff}
+.album .meta b{font:600 16px Sora;display:block}
+.album .meta small{opacity:.8;font-size:12px}
+.album .tag{position:absolute;top:12px;right:12px;font:600 11px Sora;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);color:#fff;padding:6px 10px;border-radius:99px}
+.album .glyph{position:absolute;right:-12px;top:30px;font-size:96px;opacity:.28;transform:rotate(12deg)}
+
+.day{margin:26px 0 12px;display:flex;align-items:baseline;gap:12px}
+.day h3{font-size:16px}.day span{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));grid-auto-rows:170px;gap:10px}
+.ph{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;transition:.3s;animation:pop .5s both}
+.ph.tall{grid-row:span 2}.ph.wide{grid-column:span 2}
+.ph:hover{transform:scale(1.025);z-index:2;box-shadow:0 18px 40px -12px rgba(0,0,0,.6)}
+.ph .em{position:absolute;inset:0;display:grid;place-items:center;font-size:54px;filter:drop-shadow(0 6px 12px rgba(0,0,0,.35))}
+.ph .ov{position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.4),transparent 40%,rgba(0,0,0,.5));opacity:0;transition:.25s}
+.ph:hover .ov{opacity:1}
+.ph .sel{position:absolute;top:10px;left:10px;width:24px;height:24px;border-radius:50%;border:2px solid #fff;display:grid;place-items:center;opacity:0;transition:.2s;font-size:13px;color:#fff;background:rgba(0,0,0,.25)}
+.ph:hover .sel,.ph.picked .sel{opacity:1}
+.ph.picked .sel{background:var(--accent);border-color:var(--accent)}
+.ph.picked{outline:3px solid var(--accent);outline-offset:-3px;transform:scale(.96)}
+.ph .sz{position:absolute;bottom:8px;right:10px;font:600 11px Sora;color:#fff;opacity:0;transition:.2s}
+.ph:hover .sz{opacity:1}
+.ph .vid{position:absolute;top:10px;right:10px;font:600 11px Sora;color:#fff;background:rgba(0,0,0,.45);padding:4px 8px;border-radius:99px}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+
+.selbar{position:fixed;left:50%;bottom:-90px;transform:translateX(-50%);z-index:20;display:flex;align-items:center;gap:14px;padding:12px 16px 12px 22px;border-radius:22px;background:var(--bg2);border:1px solid var(--card-b);box-shadow:0 20px 60px -10px rgba(0,0,0,.6);transition:bottom .4s cubic-bezier(.2,.9,.3,1.2)}
+.selbar.show{bottom:28px}
+.selbar b{font:600 14px Sora}
+.selbar button{border:0;cursor:pointer;padding:10px 16px;border-radius:13px;font:600 13px Sora;color:var(--text);background:var(--card);border:1px solid var(--card-b)}
+.selbar button.pri{background:linear-gradient(135deg,var(--accent),var(--accent3));color:#fff;border:0}
+
+.lb{position:fixed;inset:0;z-index:50;background:rgba(5,6,14,.88);backdrop-filter:blur(18px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+.lb.open{display:flex;animation:fade .25s}
+.lb .big{width:min(78vw,820px);height:min(62vh,560px);border-radius:28px;display:grid;place-items:center;font-size:170px;box-shadow:0 40px 120px -20px rgba(124,92,255,.5)}
+.lb .cap{color:#fff;text-align:center}.lb .cap b{font:600 18px Sora;display:block}.lb .cap small{color:#aab;font-size:13px}
+.lb .x,.lb .nv{position:absolute;color:#fff;background:rgba(255,255,255,.1);border:0;width:48px;height:48px;border-radius:50%;font-size:20px;cursor:pointer}
+.lb .x{top:24px;right:28px}.lb .nv.p{left:28px}.lb .nv.n{right:28px}
+.lb .x:hover,.lb .nv:hover{background:rgba(255,255,255,.2)}
+@keyframes fade{from{opacity:0}}
+
+.toast{position:fixed;top:24px;right:24px;z-index:60;padding:14px 20px;border-radius:16px;background:var(--bg2);border:1px solid var(--card-b);font:500 14px Inter;box-shadow:0 16px 40px -10px rgba(0,0,0,.5);transform:translateX(130%);transition:.4s}
+.toast.show{transform:none}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:50px}
+
+@media(max-width:980px){
+  .app{grid-template-columns:1fr}aside{display:none}
+  .hero{grid-template-columns:1fr}main{padding:0 18px 60px}
+  .ring-wrap{flex-direction:column;text-align:center}
+}
+@media(max-width:560px){.legend{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:150px}}
+</style>
 </head>
 <body>
+<div class="bg-orb o1"></div><div class="bg-orb o2"></div><div class="bg-orb o3"></div>
 
-  <!-- ========================================================================
-       TOP EDITORIAL HEADER
-       ======================================================================== -->
-  <header>
-    <div class="brand-section">
-      <div class="brand-crest">
-        <i data-lucide="shield-check" style="width: 19px; height: 19px;"></i>
+<div class="app">
+  <aside>
+    <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4 4 0 0 1-.6-7.96A6 6 0 0 1 18 9a4.5 4.5 0 0 1 0 9z"/></svg></div>Nimbus Vault</div>
+    <button class="upload" onclick="upload()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Upload</button>
+    <nav id="nav">
+      <a class="active" data-f="all"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Photos</a>
+      <a data-f="fav"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9A5.2 5.2 0 0 1 12 6a5.2 5.2 0 0 1 9.3 6c-2.3 4.4-9.3 9-9.3 9z"/></svg>Favorites</a>
+      <a data-f="video"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="14" height="14" rx="3"/><path d="m17 10 4-2v8l-4-2"/></svg>Videos</a>
+      <a data-f="alb"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Albums</a>
+      <a data-f="share"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>Sharing</a>
+      <a data-f="trash"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>Trash</a>
+    </nav>
+    <div class="side-storage">
+      <small>Storage</small>
+      <div class="bar"><i id="sbar"></i></div>
+      <b id="sTxt">0.00 TB of 2 TB used</b>
+    </div>
+  </aside>
+
+  <main>
+    <header>
+      <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Search your memories — “beach”, “video”, “2026”…"></div>
+      <div class="hdr-right">
+        <button class="icon-btn" id="theme" title="Toggle theme"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+        <button class="icon-btn" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+        <div class="avatar">YO</div>
       </div>
-      <div class="brand-titles">
-        <h1>atelier vault</h1>
-        <p>2.0 tb private phone media hub</p>
+    </header>
+
+    <div class="hero">
+      <div class="card ring-wrap">
+        <div class="ring">
+          <svg width="170" height="170" viewBox="0 0 170 170">
+            <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset=".5" stop-color="#7c5cff"/><stop offset="1" stop-color="#ff5fa2"/></linearGradient></defs>
+            <circle cx="85" cy="85" r="72" fill="none" stroke="rgba(150,150,200,.18)" stroke-width="16"/>
+            <circle id="arc" cx="85" cy="85" r="72" fill="none" stroke="url(#g)" stroke-width="16" stroke-linecap="round" stroke-dasharray="452.4" stroke-dashoffset="452.4" style="transition:stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1)"/>
+          </svg>
+          <div class="c"><b id="pct">0%</b><span>of 2 TB</span></div>
+        </div>
+        <div class="ring-info">
+          <h2>Your 2 TB Hub</h2>
+          <p><span id="free">—</span> free · plenty of room for years of photos, 4K videos and backups.</p>
+          <span class="pill">✦ Premium plan · Auto-backup on</span>
+        </div>
+      </div>
+
+      <div class="card breakdown">
+        <h3>Storage breakdown <span id="bdTotal"></span></h3>
+        <div class="stack" id="stack"></div>
+        <div class="legend" id="legend"></div>
       </div>
     </div>
 
-    <!-- Live Search -->
-    <div class="search-bar-wrap">
-      <input type="text" id="searchInput" class="search-input" placeholder="search archives by tag, camera, or lens...">
-      <i data-lucide="search" class="search-icon"></i>
-    </div>
+    <section id="albSec">
+      <div class="sec-head"><h2>Albums</h2><div class="chips"><span class="chip on">Recent</span><span class="chip">A–Z</span></div></div>
+      <div class="albums" id="albums"></div>
+    </section>
 
-    <!-- Header Actions -->
-    <div class="header-actions">
-      <button class="btn-outline" onclick="openSyncModal()">
-        <i data-lucide="cable" style="width: 14px; height: 14px;"></i>
-        <span>sync phone</span>
-      </button>
-
-      <label for="directFileInput" class="btn-luxury">
-        <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
-        <span>upload files</span>
-      </label>
-      <input type="file" id="directFileInput" multiple accept="image/*,video/*" style="display: none;">
-    </div>
-  </header>
-
-  <div class="app-body">
-    <!-- ======================================================================
-         LEFT SIDEBAR: 2.0 TB CAPACITY METRICS & ARCHIVE TAXONOMY
-         ====================================================================== -->
-    <aside class="sidebar">
-      
-      <!-- 2.0 TB (2,048 GB) METRIC DISPLAY -->
-      <div class="storage-card">
-        <div class="storage-header">
-          <span class="storage-tag">vault capacity</span>
-          <span class="storage-quota-badge">2,048 gb nvme</span>
-        </div>
-
-        <div class="storage-large-num">
-          <span class="amount" id="usedGbLabel">684.2</span>
-          <span class="total">/ 2,048 gb (2.0 tb)</span>
-        </div>
-
-        <!-- Multi-segment visual bar -->
-        <div class="capacity-track">
-          <div id="barRaw" class="segment-bar seg-raw" style="width: 18%;" title="ProRAW & High-Res"></div>
-          <div id="barVideo" class="segment-bar seg-video" style="width: 12%;" title="Cinematic 4K/ProRes"></div>
-          <div id="barBackup" class="segment-bar seg-backup" style="width: 3.4%;" title="Phone System Snapshots"></div>
-        </div>
-
-        <div class="capacity-legend">
-          <span id="pctUsedLabel">33.4% allocated</span>
-          <span id="availGbLabel">1,363.8 gb available</span>
-        </div>
-
-        <!-- Category details breakdown -->
-        <div class="category-breakdown">
-          <div class="category-row">
-            <span class="category-name">
-              <span class="cat-dot" style="background: var(--tan);"></span>
-              <span>proraw / captures</span>
-            </span>
-            <span class="category-val" id="catRawLabel">368.4 gb</span>
-          </div>
-          <div class="category-row">
-            <span class="category-name">
-              <span class="cat-dot" style="background: var(--crimson-accent);"></span>
-              <span>cinematic 4k / prores</span>
-            </span>
-            <span class="category-val" id="catVideoLabel">246.0 gb</span>
-          </div>
-          <div class="category-row">
-            <span class="category-name">
-              <span class="cat-dot" style="background: var(--light-brown);"></span>
-              <span>phone backups & logs</span>
-            </span>
-            <span class="category-val" id="catBackupLabel">69.8 gb</span>
-          </div>
+    <section>
+      <div class="sec-head"><h2 id="secTitle">All photos</h2>
+        <div class="chips" id="chips">
+          <span class="chip on" data-c="all">All</span><span class="chip" data-c="🌅">Travel</span><span class="chip" data-c="🐶">Pets</span><span class="chip" data-c="🍜">Food</span><span class="chip" data-c="🎉">Events</span>
         </div>
       </div>
-
-      <!-- TETHERED DEVICE STATUS -->
-      <div class="phone-sync-card">
-        <div class="phone-sync-top">
-          <div class="phone-meta">
-            <div class="phone-icon-box">
-              <i data-lucide="smartphone" style="width: 16px; height: 16px;"></i>
-            </div>
-            <div class="phone-texts">
-              <h4>iphone 16 pro max</h4>
-              <p>usb-c 3.2 gen 2 • tethered</p>
-            </div>
-          </div>
-          <span class="status-pulse">
-            <span class="status-dot"></span>
-            <span>synced</span>
-          </span>
-        </div>
-        <button class="btn-outline" style="justify-content: center; width: 100%;" onclick="openSyncModal()">
-          <i data-lucide="refresh-cw" style="width: 13px; height: 13px;"></i>
-          <span>run phone differential sync</span>
-        </button>
-      </div>
-
-      <!-- ALBUM TAXONOMY NAVIGATION -->
-      <div>
-        <div class="nav-group-title">
-          <span>curated albums</span>
-          <i data-lucide="bookmark" style="width: 12px; height: 12px;"></i>
-        </div>
-        <ul class="album-nav" id="albumList">
-          <li>
-            <button class="album-btn active" data-album="all">
-              <span>all archives</span>
-              <span class="album-badge" id="countAll">0</span>
-            </button>
-          </li>
-          <li>
-            <button class="album-btn" data-album="camera-roll">
-              <span>camera roll</span>
-              <span class="album-badge" id="countRoll">0</span>
-            </button>
-          </li>
-          <li>
-            <button class="album-btn" data-album="cinematic-video">
-              <span>cinematic video</span>
-              <span class="album-badge" id="countVideo">0</span>
-            </button>
-          </li>
-          <li>
-            <button class="album-btn" data-album="favorites">
-              <span>favorites</span>
-              <span class="album-badge" id="countFav">0</span>
-            </button>
-          </li>
-          <li>
-            <button class="album-btn" data-album="phone-archives">
-              <span>phone backups</span>
-              <span class="album-badge" id="countBackups">0</span>
-            </button>
-          </li>
-        </ul>
-      </div>
-
-      <!-- CACHE & INDEXEDDB MANAGEMENT -->
-      <div style="margin-top: auto; border-top: 1px solid var(--tan-subtle); padding-top: 1rem;">
-        <div style="font-size: 0.72rem; color: var(--tan); font-style: italic; display: flex; justify-content: space-between; margin-bottom: 0.6rem;">
-          <span>local database</span>
-          <span id="indexedStatus">active (indexeddb)</span>
-        </div>
-        <button class="btn-outline" style="font-size: 0.72rem; width: 100%; justify-content: center;" onclick="resetVaultDemo()">
-          <i data-lucide="rotate-ccw" style="width: 12px; height: 12px;"></i>
-          <span>reload default archives</span>
-        </button>
-      </div>
-
-    </aside>
-
-    <!-- ======================================================================
-         MAIN GALLERY & ARCHIVE FEED
-         ====================================================================== -->
-    <main class="main-gallery">
-      
-      <!-- LUXURY HERO DROPZONE -->
-      <div class="drop-banner">
-        <div class="dropzone-box" id="dropArea">
-          <div class="dropzone-icon">
-            <i data-lucide="upload" style="width: 18px; height: 18px;"></i>
-          </div>
-          <div class="dropzone-title">drop photos & 4k captures from your phone</div>
-          <div class="dropzone-sub">files are preserved locally inside your browser via indexeddb binary storage</div>
-        </div>
-      </div>
-
-      <!-- TOOLBAR & FILTERS -->
-      <div class="gallery-toolbar">
-        <div class="filter-pills">
-          <button class="pill-btn active" data-filter="all">all media</button>
-          <button class="pill-btn" data-filter="raw">proraw photos</button>
-          <button class="pill-btn" data-filter="video">4k video</button>
-          <button class="pill-btn" data-filter="portrait">portraits</button>
-          <button class="pill-btn" data-filter="favorites">starred</button>
-        </div>
-
-        <div class="toolbar-tools">
-          <span class="selection-banner" id="itemsCountText">showing 8 captures</span>
-
-          <div class="view-mode-toggle">
-            <button class="view-mode-btn active" id="btnViewGrid" title="editorial grid">
-              <i data-lucide="grid" style="width: 14px; height: 14px;"></i>
-            </button>
-            <button class="view-mode-btn" id="btnViewList" title="archive list">
-              <i data-lucide="list" style="width: 14px; height: 14px;"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- GALLERY CONTAINER -->
-      <div class="gallery-container">
-        <div id="mediaFeed" class="editorial-grid">
-          <!-- Populated by JS -->
-        </div>
-      </div>
-
-    </main>
-  </div>
-
-  <!-- ========================================================================
-       FULLSCREEN LIGHTBOX & BESPOKE METADATA DRAWER
-       ======================================================================== -->
-  <div class="lightbox-modal" id="lightboxModal">
-    <div class="lightbox-topbar">
-      <div class="lightbox-titles">
-        <h3 id="modalTitle">archive_item.dng</h3>
-        <p id="modalSubInfo">apple proraw • 48 mp • 42.6 mb</p>
-      </div>
-
-      <div class="lightbox-actions">
-        <button class="btn-outline" id="btnToggleFav">
-          <i data-lucide="heart" style="width: 14px; height: 14px;"></i>
-          <span>favorite</span>
-        </button>
-        <button class="btn-outline" onclick="downloadCurrentMedia()">
-          <i data-lucide="download" style="width: 14px; height: 14px;"></i>
-          <span>save file</span>
-        </button>
-        <button class="btn-outline" onclick="closeLightbox()">
-          <i data-lucide="x" style="width: 14px; height: 14px;"></i>
-          <span>close</span>
-        </button>
-      </div>
-    </div>
-
-    <div class="lightbox-stage">
-      <button class="stage-nav-btn nav-prev" onclick="cycleModal(-1)">
-        <i data-lucide="chevron-left" style="width: 20px; height: 20px;"></i>
-      </button>
-
-      <div class="stage-media-wrap" id="stageMediaContainer">
-        <!-- Injected img or video -->
-      </div>
-
-      <button class="stage-nav-btn nav-next" onclick="cycleModal(1)">
-        <i data-lucide="chevron-right" style="width: 20px; height: 20px;"></i>
-      </button>
-
-      <!-- METADATA EXIF DRAWER -->
-      <div class="metadata-drawer" id="metadataDrawer">
-        <div>
-          <span class="drawer-section-title">camera hardware</span>
-          <div class="exif-grid">
-            <div class="exif-box">
-              <span class="exif-label">camera model</span>
-              <span class="exif-value" id="exifCamera">iphone 16 pro max</span>
-            </div>
-            <div class="exif-box">
-              <span class="exif-label">lens focal</span>
-              <span class="exif-value" id="exifLens">24mm (main)</span>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <span class="drawer-section-title">exposure parameters</span>
-          <div class="exif-grid">
-            <div class="exif-box">
-              <span class="exif-label">aperture</span>
-              <span class="exif-value" id="exifAperture">ƒ/1.78</span>
-            </div>
-            <div class="exif-box">
-              <span class="exif-label">shutter speed</span>
-              <span class="exif-value" id="exifShutter">1/3200s</span>
-            </div>
-            <div class="exif-box">
-              <span class="exif-label">iso sensitivity</span>
-              <span class="exif-value" id="exifIso">iso 50</span>
-            </div>
-            <div class="exif-box">
-              <span class="exif-label">resolution</span>
-              <span class="exif-value" id="exifResolution">8064 × 6048</span>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <span class="drawer-section-title">storage & archival</span>
-          <div class="exif-grid">
-            <div class="exif-box">
-              <span class="exif-label">file size</span>
-              <span class="exif-value" id="exifSize">38.4 mb</span>
-            </div>
-            <div class="exif-box">
-              <span class="exif-label">archive bucket</span>
-              <span class="exif-value" id="exifAlbum">camera roll</span>
-            </div>
-            <div class="exif-box" style="grid-column: span 2;">
-              <span class="exif-label">geotag location</span>
-              <span class="exif-value" id="exifLocation">paris, place vendôme</span>
-            </div>
-            <div class="exif-box" style="grid-column: span 2;">
-              <span class="exif-label">timestamp</span>
-              <span class="exif-value" id="exifDate">october 20, 2026 • 15:42</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================================
-       TETHERED USB-C / CABLE PHONE SYNC SIMULATOR MODAL
-       ======================================================================== -->
-  <div class="sync-modal" id="syncModal">
-    <div class="sync-dialog">
-      <div class="sync-crest">
-        <i data-lucide="cable" style="width: 24px; height: 24px;"></i>
-      </div>
-      <h3>tethered phone sync</h3>
-      <p>synchronizing dcim camera roll & 4k video logs via usb-c 3.2</p>
-
-      <div class="sync-progress-track">
-        <div class="sync-progress-fill" id="syncProgressFill"></div>
-      </div>
-
-      <div class="sync-stats-row">
-        <span id="syncRate">1.25 gb/s throughput</span>
-        <span id="syncPercent">0%</span>
-      </div>
-
-      <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 0.8rem;">
-        <button class="btn-luxury" id="btnStartSync" onclick="startSyncSimulation()">start backup</button>
-        <button class="btn-outline" onclick="closeSyncModal()">cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================================
-       FLOATING BATCH ACTIONS BAR
-       ======================================================================== -->
-  <div class="batch-bar" id="batchBar">
-    <span style="font-size: 0.8rem; font-style: italic; color: var(--tan);" id="batchCountLabel">0 items selected</span>
-    <button class="btn-outline" onclick="batchToggleFavorite()">
-      <i data-lucide="heart" style="width: 13px; height: 13px;"></i>
-      <span>favorite</span>
-    </button>
-    <button class="btn-outline" onclick="batchDownload()">
-      <i data-lucide="download" style="width: 13px; height: 13px;"></i>
-      <span>download</span>
-    </button>
-    <button class="btn-luxury" style="padding: 0.4rem 0.8rem;" onclick="batchDelete()">
-      <i data-lucide="trash" style="width: 13px; height: 13px;"></i>
-      <span>delete</span>
-    </button>
-  </div>
-
-  <!-- TOAST TRAY -->
-  <div class="toast-tray" id="toastTray"></div>
-
-  <!-- ========================================================================
-       APPLICATION LOGIC, INDEXEDDB & MEDIA STATE
-       ======================================================================== -->
-  <script>
-    /* Total Capacity: 2.0 TB (2,048 GB) */
-    const TOTAL_CAPACITY_GB = 2048.0;
-    const DB_NAME = 'AtelierVault_2TB_DB';
-    const STORE_NAME = 'media_records';
-    let db = null;
-
-    let mediaVault = [];
-    let activeFilter = 'all';
-    let activeAlbum = 'all';
-    let searchQuery = '';
-    let currentViewMode = 'grid'; // 'grid' | 'list'
-    let selectedIds = new Set();
-    let currentLightboxIdx = 0;
-    let filteredList = [];
-
-    /* Pre-seeded Curated Luxury Media */
-    const SEED_DATA = [
-      {
-        id: 'vault_seed_01',
-        title: 'IMG_9104_ProRAW_Vendome.dng',
-        type: 'photo',
-        category: 'raw',
-        album: 'camera-roll',
-        url: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1600&q=85',
-        thumb: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80',
-        sizeMB: 48.2,
-        camera: 'iPhone 16 Pro Max',
-        lens: '24mm ƒ/1.78 Main',
-        aperture: 'ƒ/1.78',
-        shutter: '1/3200s',
-        iso: 'ISO 50',
-        resolution: '8064 × 6048 (48 MP)',
-        location: 'Paris, Place Vendôme',
-        date: 'Oct 20, 2026',
-        favorite: true
-      },
-      {
-        id: 'vault_seed_02',
-        title: 'VID_0428_Cinematic4K_Amalfi.mp4',
-        type: 'video',
-        category: 'video',
-        album: 'cinematic-video',
-        duration: '02:40',
-        url: 'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-water-1164-large.mp4',
-        thumb: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=600&q=80',
-        sizeMB: 820.0,
-        camera: 'iPhone 16 Pro Max',
-        lens: '120mm ƒ/2.8 5x Telephoto',
-        aperture: 'ƒ/2.8',
-        shutter: '1/120s',
-        iso: 'ISO 100',
-        resolution: '3840 × 2160 (4K 60fps)',
-        location: 'Amalfi Coast, Italy',
-        date: 'Oct 19, 2026',
-        favorite: false
-      },
-      {
-        id: 'vault_seed_03',
-        title: 'IMG_8432_Leica_AtelierPortrait.dng',
-        type: 'photo',
-        category: 'portrait',
-        album: 'camera-roll',
-        url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1600&q=85',
-        thumb: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-        sizeMB: 54.6,
-        camera: 'Leica M11-P',
-        lens: 'Summilux-M 35mm f/1.4',
-        aperture: 'ƒ/1.4',
-        shutter: '1/1000s',
-        iso: 'ISO 64',
-        resolution: '9528 × 6328 (60 MP)',
-        location: 'Milan Fashion Atelier',
-        date: 'Oct 18, 2026',
-        favorite: true
-      },
-      {
-        id: 'vault_seed_04',
-        title: 'IMG_7781_KyotoGardens.heic',
-        type: 'photo',
-        category: 'raw',
-        album: 'camera-roll',
-        url: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=85',
-        thumb: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=600&q=80',
-        sizeMB: 22.4,
-        camera: 'iPhone 16 Pro Max',
-        lens: '48mm ƒ/1.78 2x Tele',
-        aperture: 'ƒ/1.78',
-        shutter: '1/640s',
-        iso: 'ISO 125',
-        resolution: '5712 × 4284 (24 MP)',
-        location: 'Kyoto, Arashiyama',
-        date: 'Oct 15, 2026',
-        favorite: false
-      },
-      {
-        id: 'vault_seed_05',
-        title: 'VID_0891_ProResLog_Monaco.mov',
-        type: 'video',
-        category: 'video',
-        album: 'cinematic-video',
-        duration: '01:15',
-        url: 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-42211-large.mp4',
-        thumb: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=600&q=80',
-        sizeMB: 1450.0,
-        camera: 'iPhone 16 Pro Max',
-        lens: '24mm ƒ/1.78 Apple Log',
-        aperture: 'ƒ/1.78',
-        shutter: '1/60s',
-        iso: 'ISO 400',
-        resolution: '3840 × 2160 (Apple Log ProRes)',
-        location: 'Monte Carlo Marina',
-        date: 'Oct 12, 2026',
-        favorite: true
-      },
-      {
-        id: 'vault_seed_06',
-        title: 'IMG_6201_StMoritz_Summit.dng',
-        type: 'photo',
-        category: 'raw',
-        album: 'camera-roll',
-        url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85',
-        thumb: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80',
-        sizeMB: 42.1,
-        camera: 'iPhone 16 Pro Max',
-        lens: '120mm ƒ/2.8 5x Tele',
-        aperture: 'ƒ/2.8',
-        shutter: '1/4000s',
-        iso: 'ISO 50',
-        resolution: '8064 × 6048 (48 MP)',
-        location: 'Engadin Valley, Switzerland',
-        date: 'Oct 08, 2026',
-        favorite: false
-      },
-      {
-        id: 'vault_seed_07',
-        title: 'IMG_5311_Sartorial_Editorial.heic',
-        type: 'photo',
-        category: 'portrait',
-        album: 'camera-roll',
-        url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1600&q=85',
-        thumb: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80',
-        sizeMB: 18.9,
-        camera: 'Leica SL2-S',
-        lens: 'Vario-Elmarit 24-70mm',
-        aperture: 'ƒ/2.8',
-        shutter: '1/250s',
-        iso: 'ISO 200',
-        resolution: '6000 × 4000 (24 MP)',
-        location: 'Mayfair, London',
-        date: 'Oct 04, 2026',
-        favorite: true
-      },
-      {
-        id: 'vault_seed_08',
-        title: 'BACKUP_DCIM_SNAPSHOT_2026.pkg',
-        type: 'backup',
-        category: 'backup',
-        album: 'phone-archives',
-        url: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1600&q=85',
-        thumb: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80',
-        sizeMB: 2840.0,
-        camera: 'iPhone 16 Pro System',
-        lens: 'Complete DCIM + Health Data',
-        aperture: 'N/A',
-        shutter: 'N/A',
-        iso: 'Encrypted',
-        resolution: 'System Partition (APFS)',
-        location: 'Hardware Mirror',
-        date: 'Oct 01, 2026',
-        favorite: false
-      }
-    ];
-
-    /* ==========================================================================
-       INDEXEDDB LOCAL STORAGE ENGINE
-       ========================================================================== */
-    function initDatabase() {
-      return new Promise((resolve, reject) => {
-        const req = indexedDB.open(DB_NAME, 1);
-        req.onupgradeneeded = (e) => {
-          const dbInstance = e.target.result;
-          if (!dbInstance.objectStoreNames.contains(STORE_NAME)) {
-            dbInstance.createObjectStore(STORE_NAME, { keyPath: 'id' });
-          }
-        };
-        req.onsuccess = (e) => {
-          db = e.target.result;
-          resolve(db);
-        };
-        req.onerror = () => reject(req.error);
-      });
-    }
-
-    async function dbSaveItem(item) {
-      if (!db) return;
-      return new Promise((resolve) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        tx.objectStore(STORE_NAME).put(item);
-        tx.oncomplete = () => resolve();
-      });
-    }
-
-    async function dbGetAll() {
-      if (!db) return [];
-      return new Promise((resolve) => {
-        const tx = db.transaction(STORE_NAME, 'readonly');
-        const req = tx.objectStore(STORE_NAME).getAll();
-        req.onsuccess = () => resolve(req.result || []);
-      });
-    }
-
-    async function dbDeleteItem(id) {
-      if (!db) return;
-      return new Promise((resolve) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        tx.objectStore(STORE_NAME).delete(id);
-        tx.oncomplete = () => resolve();
-      });
-    }
-
-    async function dbClearAll() {
-      if (!db) return;
-      return new Promise((resolve) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        tx.objectStore(STORE_NAME).clear();
-        tx.oncomplete = () => resolve();
-      });
-    }
-
-    /* ==========================================================================
-       2.0 TB (2,048 GB) METRICS CALCULATOR
-       ========================================================================== */
-    function updateCapacityMetrics() {
-      // Base hardware simulated archives:
-      let rawMB = 368.4 * 1024;
-      let videoMB = 246.0 * 1024;
-      let backupMB = 69.8 * 1024;
-
-      // Calculate dynamically with user's uploaded items
-      mediaVault.forEach(item => {
-        const sz = item.sizeMB || 25;
-        if (item.category === 'video' || item.type === 'video') {
-          videoMB += sz;
-        } else if (item.category === 'backup') {
-          backupMB += sz;
-        } else {
-          rawMB += sz;
-        }
-      });
-
-      const rawGB = rawMB / 1024;
-      const videoGB = videoMB / 1024;
-      const backupGB = backupMB / 1024;
-      const totalUsedGB = rawGB + videoGB + backupGB;
-      const availGB = Math.max(0, TOTAL_CAPACITY_GB - totalUsedGB);
-      const pctUsed = ((totalUsedGB / TOTAL_CAPACITY_GB) * 100).toFixed(1);
-
-      // DOM Updates
-      document.getElementById('usedGbLabel').textContent = totalUsedGB.toFixed(1);
-      document.getElementById('availGbLabel').textContent = `${availGB.toFixed(1)} gb available`;
-      document.getElementById('pctUsedLabel').textContent = `${pctUsed}% allocated`;
-
-      // Visual segment bar widths
-      document.getElementById('barRaw').style.width = `${((rawGB / TOTAL_CAPACITY_GB) * 100).toFixed(2)}%`;
-      document.getElementById('barVideo').style.width = `${((videoGB / TOTAL_CAPACITY_GB) * 100).toFixed(2)}%`;
-      document.getElementById('barBackup').style.width = `${((backupGB / TOTAL_CAPACITY_GB) * 100).toFixed(2)}%`;
-
-      document.getElementById('catRawLabel').textContent = `${rawGB.toFixed(1)} gb`;
-      document.getElementById('catVideoLabel').textContent = `${videoGB.toFixed(1)} gb`;
-      document.getElementById('catBackupLabel').textContent = `${backupGB.toFixed(1)} gb`;
-
-      // Update album badge counters
-      document.getElementById('countAll').textContent = mediaVault.length;
-      document.getElementById('countRoll').textContent = mediaVault.filter(m => m.album === 'camera-roll').length;
-      document.getElementById('countVideo').textContent = mediaVault.filter(m => m.album === 'cinematic-video' || m.type === 'video').length;
-      document.getElementById('countFav').textContent = mediaVault.filter(m => m.favorite).length;
-      document.getElementById('countBackups').textContent = mediaVault.filter(m => m.album === 'phone-archives' || m.type === 'backup').length;
-    }
-
-    /* ==========================================================================
-       GALLERY RENDERING & TAXONOMY FILTERS
-       ========================================================================== */
-    function renderGallery() {
-      const feed = document.getElementById('mediaFeed');
-      feed.innerHTML = '';
-
-      filteredList = mediaVault.filter(item => {
-        // Album constraint
-        if (activeAlbum === 'camera-roll' && item.album !== 'camera-roll') return false;
-        if (activeAlbum === 'cinematic-video' && (item.album !== 'cinematic-video' && item.type !== 'video')) return false;
-        if (activeAlbum === 'favorites' && !item.favorite) return false;
-        if (activeAlbum === 'phone-archives' && item.album !== 'phone-archives') return false;
-
-        // Toolbar pill filter
-        if (activeFilter === 'raw' && item.category !== 'raw') return false;
-        if (activeFilter === 'video' && item.type !== 'video') return false;
-        if (activeFilter === 'portrait' && item.category !== 'portrait') return false;
-        if (activeFilter === 'favorites' && !item.favorite) return false;
-
-        // Search text
-        if (searchQuery) {
-          const q = searchQuery.toLowerCase();
-          const matchTitle = (item.title || '').toLowerCase().includes(q);
-          const matchCamera = (item.camera || '').toLowerCase().includes(q);
-          const matchLoc = (item.location || '').toLowerCase().includes(q);
-          if (!matchTitle && !matchCamera && !matchLoc) return false;
-        }
-
-        return true;
-      });
-
-      document.getElementById('itemsCountText').textContent = `showing ${filteredList.length} capture${filteredList.length === 1 ? '' : 's'}`;
-
-      if (filteredList.length === 0) {
-        feed.innerHTML = `
-          <div style="grid-column: 1 / -1; padding: 4rem 1rem; text-align: center; color: var(--tan); font-style: italic;">
-            <i data-lucide="archive" style="width: 32px; height: 32px; margin: 0 auto 0.8rem auto; opacity: 0.6;"></i>
-            <p style="font-size: 0.95rem;">no archives match the current inquiry</p>
-          </div>
-        `;
-        lucide.createIcons();
-        return;
-      }
-
-      if (currentViewMode === 'grid') {
-        feed.className = 'editorial-grid';
-        filteredList.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'media-card';
-          card.onclick = () => openLightbox(item.id);
-
-          const isChecked = selectedIds.has(item.id);
-
-          card.innerHTML = `
-            <div class="card-thumb-wrap">
-              <img src="${item.thumb || item.url}" class="card-thumb" alt="${item.title}" loading="lazy">
-              ${item.type === 'video' ? `
-                <span class="video-pill">
-                  <i data-lucide="play" style="width: 10px; height: 10px; fill: currentColor;"></i>
-                  <span>${item.duration || '4k'}</span>
-                </span>
-              ` : ''}
-              <div class="card-select-check ${isChecked ? 'checked' : ''}" onclick="event.stopPropagation(); toggleSelect('${item.id}')">
-                <i data-lucide="check" style="width: 12px; height: 12px; display: ${isChecked ? 'block' : 'none'};"></i>
-              </div>
-            </div>
-            <div class="card-caption">
-              <div class="caption-title">${item.title}</div>
-              <div class="caption-meta">
-                <span>${item.camera}</span>
-                <span>${item.sizeMB.toFixed(1)} mb</span>
-              </div>
-            </div>
-          `;
-          feed.appendChild(card);
-        });
-      } else {
-        // List View
-        feed.className = 'editorial-list';
-        filteredList.forEach(item => {
-          const row = document.createElement('div');
-          row.className = 'list-row';
-          row.onclick = () => openLightbox(item.id);
-
-          const isChecked = selectedIds.has(item.id);
-
-          row.innerHTML = `
-            <div class="card-select-check ${isChecked ? 'checked' : ''}" onclick="event.stopPropagation(); toggleSelect('${item.id}')" style="position: static;">
-              <i data-lucide="check" style="width: 12px; height: 12px; display: ${isChecked ? 'block' : 'none'};"></i>
-            </div>
-            <img src="${item.thumb || item.url}" class="list-thumb">
-            <span style="color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title}</span>
-            <span style="color: var(--tan); font-style: italic;">${item.camera}</span>
-            <span style="color: var(--tan);">${item.date}</span>
-            <span style="color: var(--cream); text-align: right;">${item.sizeMB.toFixed(1)} mb</span>
-            <div style="text-align: right;">
-              <i data-lucide="heart" style="width: 13px; height: 13px; color: ${item.favorite ? 'var(--crimson-accent)' : 'var(--tan)'}; fill: ${item.favorite ? 'var(--crimson-accent)' : 'none'};"></i>
-            </div>
-          `;
-          feed.appendChild(row);
-        });
-      }
-
-      lucide.createIcons();
-    }
-
-    /* ==========================================================================
-       FILE UPLOAD & DRAG/DROP (WITH INDEXEDDB PERSISTENCE)
-       ========================================================================== */
-    async function handleIncomingFiles(fileList) {
-      if (!fileList || !fileList.length) return;
-      showToast(`archiving ${fileList.length} phone media item(s)...`);
-
-      for (let i = 0; i < fileList.length; i++) {
-        const file = fileList[i];
-        const isVideo = file.type.startsWith('video/');
-        const dataUrl = await readDataUrl(file);
-        const szMB = file.size / (1024 * 1024);
-
-        const newArchive = {
-          id: 'user_media_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
-          title: file.name,
-          type: isVideo ? 'video' : 'photo',
-          category: isVideo ? 'video' : 'raw',
-          album: isVideo ? 'cinematic-video' : 'camera-roll',
-          duration: isVideo ? '01:24' : null,
-          url: dataUrl,
-          thumb: dataUrl,
-          sizeMB: szMB > 0 ? szMB : 32.5,
-          camera: 'iPhone 16 Pro Max',
-          lens: '24mm ƒ/1.78 Main',
-          aperture: 'ƒ/1.78',
-          shutter: '1/2400s',
-          iso: 'ISO 64',
-          resolution: isVideo ? '3840 × 2160 (4K 60fps)' : '8064 × 6048 (48 MP ProRAW)',
-          location: 'Phone Local Storage',
-          date: 'Oct 20, 2026',
-          favorite: false
-        };
-
-        await dbSaveItem(newArchive);
-        mediaVault.unshift(newArchive);
-      }
-
-      updateCapacityMetrics();
-      renderGallery();
-      showToast('media preserved successfully in 2.0 tb vault');
-    }
-
-    function readDataUrl(file) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => resolve(URL.createObjectURL(file));
-        reader.readAsDataURL(file);
-      });
-    }
-
-    /* ==========================================================================
-       LIGHTBOX VIEWER & EXIF DRAWER
-       ========================================================================== */
-    function openLightbox(itemId) {
-      const idx = filteredList.findIndex(m => m.id === itemId);
-      if (idx === -1) return;
-      currentLightboxIdx = idx;
-      updateLightboxStage();
-      document.getElementById('lightboxModal').classList.add('active');
-    }
-
-    function closeLightbox() {
-      document.getElementById('lightboxModal').classList.remove('active');
-      document.getElementById('stageMediaContainer').innerHTML = '';
-    }
-
-    function cycleModal(step) {
-      if (filteredList.length === 0) return;
-      currentLightboxIdx = (currentLightboxIdx + step + filteredList.length) % filteredList.length;
-      updateLightboxStage();
-    }
-
-    function updateLightboxStage() {
-      const item = filteredList[currentLightboxIdx];
-      if (!item) return;
-
-      const container = document.getElementById('stageMediaContainer');
-      container.innerHTML = '';
-
-      if (item.type === 'video') {
-        const vid = document.createElement('video');
-        vid.src = item.url;
-        vid.controls = true;
-        vid.autoplay = true;
-        container.appendChild(vid);
-      } else {
-        const img = document.createElement('img');
-        img.src = item.url;
-        img.alt = item.title;
-        container.appendChild(img);
-      }
-
-      document.getElementById('modalTitle').textContent = item.title;
-      document.getElementById('modalSubInfo').textContent = `${item.resolution} • ${item.camera} • ${item.sizeMB.toFixed(1)} mb`;
-
-      // EXIF metadata drawer
-      document.getElementById('exifCamera').textContent = item.camera;
-      document.getElementById('exifLens').textContent = item.lens;
-      document.getElementById('exifAperture').textContent = item.aperture;
-      document.getElementById('exifShutter').textContent = item.shutter;
-      document.getElementById('exifIso').textContent = item.iso;
-      document.getElementById('exifResolution').textContent = item.resolution;
-      document.getElementById('exifSize').textContent = `${item.sizeMB.toFixed(1)} mb`;
-      document.getElementById('exifAlbum').textContent = item.album;
-      document.getElementById('exifLocation').textContent = item.location;
-      document.getElementById('exifDate').textContent = item.date;
-
-      const favBtn = document.getElementById('btnToggleFav');
-      favBtn.onclick = () => {
-        item.favorite = !item.favorite;
-        dbSaveItem(item);
-        updateCapacityMetrics();
-        renderGallery();
-        updateLightboxStage();
-        showToast(item.favorite ? 'marked as favorite' : 'removed from favorites');
-      };
-      favBtn.querySelector('span').textContent = item.favorite ? 'favorited' : 'favorite';
-      favBtn.querySelector('i').style.color = item.favorite ? 'var(--crimson-accent)' : 'var(--tan)';
-
-      lucide.createIcons();
-    }
-
-    function downloadCurrentMedia() {
-      const item = filteredList[currentLightboxIdx];
-      if (!item) return;
-      const a = document.createElement('a');
-      a.href = item.url;
-      a.download = item.title;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      showToast(`saving ${item.title}`);
-    }
-
-    /* ==========================================================================
-       TETHERED USB-C / CABLE PHONE SYNC SIMULATOR
-       ========================================================================== */
-    function openSyncModal() {
-      document.getElementById('syncModal').classList.add('active');
-    }
-
-    function closeSyncModal() {
-      document.getElementById('syncModal').classList.remove('active');
-    }
-
-    function startSyncSimulation() {
-      const btn = document.getElementById('btnStartSync');
-      btn.disabled = true;
-      btn.style.opacity = '0.5';
-
-      const fill = document.getElementById('syncProgressFill');
-      const rateLabel = document.getElementById('syncRate');
-      const pctLabel = document.getElementById('syncPercent');
-
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 4;
-        fill.style.width = `${Math.min(progress, 100)}%`;
-        pctLabel.textContent = `${Math.min(progress, 100)}%`;
-        rateLabel.textContent = `${(1.18 + Math.random() * 0.15).toFixed(2)} gb/s throughput`;
-
-        if (progress >= 100) {
-          clearInterval(interval);
-          setTimeout(async () => {
-            // Ingest simulated synced phone asset
-            const syncedBatch = {
-              id: 'synced_usb_' + Date.now(),
-              title: `IMG_DCIM_${Math.floor(1000 + Math.random() * 9000)}_ProRAW.dng`,
-              type: 'photo',
-              category: 'raw',
-              album: 'camera-roll',
-              url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=85',
-              thumb: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
-              sizeMB: 52.4,
-              camera: 'iPhone 16 Pro Max',
-              lens: '24mm ƒ/1.78 Main',
-              aperture: 'ƒ/1.78',
-              shutter: '1/3200s',
-              iso: 'ISO 50',
-              resolution: '8064 × 6048 (48 MP ProRAW)',
-              location: 'Yosemite National Park',
-              date: 'Oct 20, 2026',
-              favorite: true
-            };
-
-            await dbSaveItem(syncedBatch);
-            mediaVault.unshift(syncedBatch);
-            updateCapacityMetrics();
-            renderGallery();
-
-            closeSyncModal();
-            btn.disabled = false;
-            btn.style.opacity = '1';
-            fill.style.width = '0%';
-            showToast('tethered differential sync finished: +52.4 mb archived');
-          }, 400);
-        }
-      }, 70);
-    }
-
-    /* ==========================================================================
-       BATCH SELECTION & MANAGEMENT
-       ========================================================================== */
-    function toggleSelect(id) {
-      if (selectedIds.has(id)) {
-        selectedIds.delete(id);
-      } else {
-        selectedIds.add(id);
-      }
-      updateBatchBar();
-      renderGallery();
-    }
-
-    function updateBatchBar() {
-      const bar = document.getElementById('batchBar');
-      const countLabel = document.getElementById('batchCountLabel');
-      if (selectedIds.size > 0) {
-        bar.classList.add('visible');
-        countLabel.textContent = `${selectedIds.size} item${selectedIds.size === 1 ? '' : 's'} selected`;
-      } else {
-        bar.classList.remove('visible');
-      }
-    }
-
-    async function batchDelete() {
-      if (selectedIds.size === 0) return;
-      for (const id of selectedIds) {
-        await dbDeleteItem(id);
-        mediaVault = mediaVault.filter(m => m.id !== id);
-      }
-      selectedIds.clear();
-      updateBatchBar();
-      updateCapacityMetrics();
-      renderGallery();
-      showToast('selected captures removed from vault');
-    }
-
-    function batchToggleFavorite() {
-      selectedIds.forEach(id => {
-        const item = mediaVault.find(m => m.id === id);
-        if (item) {
-          item.favorite = true;
-          dbSaveItem(item);
-        }
-      });
-      selectedIds.clear();
-      updateBatchBar();
-      updateCapacityMetrics();
-      renderGallery();
-      showToast('added selected to favorites');
-    }
-
-    function batchDownload() {
-      selectedIds.forEach(id => {
-        const item = mediaVault.find(m => m.id === id);
-        if (item) {
-          const a = document.createElement('a');
-          a.href = item.url;
-          a.download = item.title;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        }
-      });
-      showToast(`downloading ${selectedIds.size} captures`);
-      selectedIds.clear();
-      updateBatchBar();
-      renderGallery();
-    }
-
-    /* ==========================================================================
-       TOAST NOTIFICATIONS
-       ========================================================================== */
-    function showToast(msg) {
-      const tray = document.getElementById('toastTray');
-      const toast = document.createElement('div');
-      toast.className = 'toast-msg';
-      toast.innerHTML = `
-        <i data-lucide="info" style="width: 14px; height: 14px; color: var(--tan);"></i>
-        <span>${msg}</span>
-      `;
-      tray.appendChild(toast);
-      lucide.createIcons();
-
-      requestAnimationFrame(() => toast.classList.add('show'));
-
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 400);
-      }, 3500);
-    }
-
-    async function resetVaultDemo() {
-      await dbClearAll();
-      mediaVault = [...SEED_DATA];
-      for (const item of mediaVault) {
-        await dbSaveItem(item);
-      }
-      selectedIds.clear();
-      updateBatchBar();
-      updateCapacityMetrics();
-      renderGallery();
-      showToast('restored factory default 2.0 tb archives');
-    }
-
-    /* ==========================================================================
-       SETUP EVENT LISTENERS
-       ========================================================================== */
-    window.addEventListener('DOMContentLoaded', async () => {
-      await initDatabase();
-      const existing = await dbGetAll();
-
-      if (existing && existing.length > 0) {
-        mediaVault = existing;
-      } else {
-        mediaVault = [...SEED_DATA];
-        for (const s of mediaVault) {
-          await dbSaveItem(s);
-        }
-      }
-
-      updateCapacityMetrics();
-      renderGallery();
-
-      // Search Handler
-      const sInput = document.getElementById('searchInput');
-      sInput.addEventListener('input', (e) => {
-        searchQuery = e.target.value.trim();
-        renderGallery();
-      });
-
-      // Filter Pills
-      document.querySelectorAll('.pill-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          activeFilter = btn.getAttribute('data-filter');
-          renderGallery();
-        });
-      });
-
-      // Album Sidebar Nav
-      document.querySelectorAll('.album-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.album-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          activeAlbum = btn.getAttribute('data-album');
-          renderGallery();
-        });
-      });
-
-      // View Mode Toggle
-      document.getElementById('btnViewGrid').addEventListener('click', () => {
-        currentViewMode = 'grid';
-        document.getElementById('btnViewGrid').classList.add('active');
-        document.getElementById('btnViewList').classList.remove('active');
-        renderGallery();
-      });
-
-      document.getElementById('btnViewList').addEventListener('click', () => {
-        currentViewMode = 'list';
-        document.getElementById('btnViewList').classList.add('active');
-        document.getElementById('btnViewGrid').classList.remove('active');
-        renderGallery();
-      });
-
-      // Drag and Drop
-      const dropBox = document.getElementById('dropArea');
-      const fileInput = document.getElementById('directFileInput');
-
-      ['dragenter', 'dragover'].forEach(name => {
-        dropBox.addEventListener(name, (e) => {
-          e.preventDefault();
-          dropBox.classList.add('dragover');
-        });
-      });
-
-      ['dragleave', 'drop'].forEach(name => {
-        dropBox.addEventListener(name, (e) => {
-          e.preventDefault();
-          dropBox.classList.remove('dragover');
-        });
-      });
-
-      dropBox.addEventListener('drop', (e) => {
-        if (e.dataTransfer && e.dataTransfer.files) {
-          handleIncomingFiles(e.dataTransfer.files);
-        }
-      });
-
-      dropBox.addEventListener('click', () => fileInput.click());
-      fileInput.addEventListener('change', (e) => {
-        handleIncomingFiles(e.target.files);
-        fileInput.value = '';
-      });
-
-      // Keyboard navigation
-      window.addEventListener('keydown', (e) => {
-        const modal = document.getElementById('lightboxModal');
-        if (!modal.classList.contains('active')) return;
-
-        if (e.key === 'ArrowLeft') cycleModal(-1);
-        if (e.key === 'ArrowRight') cycleModal(1);
-        if (e.key === 'Escape') closeLightbox();
-      });
-    });
-  </script>
+      <div id="timeline"></div>
+    </section>
+  </main>
+</div>
+
+<div class="selbar" id="selbar"><b id="selN">0 selected</b><button onclick="act('Shared')">Share</button><button onclick="act('Added to album')">Add to album</button><button class="pri" onclick="act('Moved to trash')">Delete</button><button onclick="clearSel()">✕</button></div>
+
+<div class="lb" id="lb"><button class="x" onclick="closeLb()">✕</button><button class="nv p" onclick="step(-1)">‹</button><div class="big" id="lbBig"></div><div class="cap"><b id="lbT"></b><small id="lbS"></small></div><button class="nv n" onclick="step(1)">›</button></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const TB=2, USED=1.27; // TB — edit to change displayed usage
+const cats=[
+  {n:'Photos',v:.62,c:'#7c5cff',i:'🖼️'},
+  {n:'Videos',v:.38,c:'#22d3ee',i:'🎬'},
+  {n:'Documents',v:.14,c:'#ff5fa2',i:'📄'},
+  {n:'Backups',v:.13,c:'#ffb020',i:'💾'}
+];
+const $=s=>document.querySelector(s);
+function fmt(tb){return tb>=1?tb.toFixed(2)+' TB':Math.round(tb*1024)+' GB'}
+
+// storage UI
+(function(){
+  const p=USED/TB;
+  $('#sTxt').textContent=USED.toFixed(2)+' TB of '+TB+' TB used';
+  $('#free').textContent=fmt(TB-USED);
+  $('#bdTotal').textContent=USED.toFixed(2)+' TB total';
+  $('#stack').innerHTML=cats.map(c=>`<i style="background:${c.c}" data-w="${c.v/USED*100}"></i>`).join('');
+  $('#legend').innerHTML=cats.map(c=>`<div class="lg"><div class="dot" style="background:${c.c}33">${c.i}</div><div><b>${c.n}</b><small>${fmt(c.v)} · ${Math.round(c.v/TB*100)}%</small></div></div>`).join('');
+  setTimeout(()=>{
+    $('#sbar').style.width=p*100+'%';
+    $('#arc').style.strokeDashoffset=452.4*(1-p);
+    document.querySelectorAll('#stack i').forEach(e=>e.style.width=e.dataset.w+'%');
+    let n=0;const t=Math.round(p*100);const iv=setInterval(()=>{n++;$('#pct').textContent=n+'%';if(n>=t)clearInterval(iv)},18);
+  },250);
+})();
+
+// data
+const grads=[['#ff9a5f','#ff5fa2'],['#22d3ee','#7c5cff'],['#34d399','#22d3ee'],['#fbbf24','#f97316'],['#a78bfa','#ec4899'],['#60a5fa','#34d399'],['#f472b6','#fb923c'],['#818cf8','#22d3ee']];
+const scenes=[['🌅','Sunset Beach'],['🏔️','Mountain Trail'],['🐶','Buddy at the Park'],['🍜','Ramen Night'],['🎉','Birthday Bash'],['🌆','City Lights'],['🌸','Spring Bloom'],['🚗','Road Trip'],['🐱','Lazy Sunday'],['🍰','Cake Day'],['🏖️','Coast Walk'],['🎆','New Year'],['🌊','Surf Day'],['🏕️','Camp Night'],['🥘','Family Dinner'],['🎸','Live Show']];
+const days=['Today','Yesterday','Sunday, Oct 18','Saturday, Oct 17','Friday, Oct 16','Monday, Oct 12'];
+let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+const photos=[];let id=0;
+days.forEach((d,di)=>{
+  const n=4+Math.floor(rnd()*4);
+  for(let k=0;k<n;k++){
+    const s=scenes[Math.floor(rnd()*scenes.length)],g=grads[Math.floor(rnd()*grads.length)];
+    photos.push({id:id++,day:d,em:s[0],t:s[1],g,sz:(2+rnd()*18).toFixed(1)+' MB',vid:rnd()>.82,fav:rnd()>.75,shape:rnd()>.85?'tall':rnd()>.9?'wide':''});
+  }
+});
+const albums=[
+  {n:'Summer 2026',c:238,e:'🏖️',g:grads[0],t:'Shared'},
+  {n:'Family',c:512,e:'👨‍👩‍👧',g:grads[1],t:'Shared'},
+  {n:'Pets',c:187,e:'🐶',g:grads[2],t:''},
+  {n:'Food Diary',c:96,e:'🍜',g:grads[3],t:''},
+  {n:'Travel',c:644,e:'✈️',g:grads[4],t:'Pinned'},
+  {n:'Screenshots',c:1203,e:'📱',g:grads[5],t:''}
+];
+$('#albums').innerHTML=albums.map(a=>`<div class="album" style="background:linear-gradient(135deg,${a.g[0]},${a.g[1]})"><span class="glyph">${a.e}</span>${a.t?`<span class="tag">${a.t}</span>`:''}<div class="shade"></div><div class="meta"><b>${a.n}</b><small>${a.c} items</small></div></div>`).join('');
+
+// render
+let filter='all',cat='all',query='',picked=new Set(),view=[],cur=0;
+function render(){
+  const q=query.toLowerCase();
+  view=photos.filter(p=>(filter!=='video'||p.vid)&&(filter!=='fav'||p.fav)&&(cat==='all'||p.em===cat)&&(!q||(p.t+p.day+(p.vid?' video':'')).toLowerCase().includes(q)));
+  if(filter==='trash'||filter==='share')view=[];
+  const by={};view.forEach(p=>(by[p.day]=by[p.day]||[]).push(p));
+  let h='';let delay=0;
+  Object.keys(by).forEach(d=>{
+    h+=`<div class="day"><h3>${d}</h3><span>${by[d].length} items</span></div><div class="grid">`;
+    by[d].forEach(p=>{h+=`<div class="ph ${p.shape} ${picked.has(p.id)?'picked':''}" data-id="${p.id}" style="background:linear-gradient(135deg,${p.g[0]},${p.g[1]});animation-delay:${(delay++)*25}ms"><div class="em">${p.em}</div><div class="ov"></div><div class="sel">✓</div>${p.vid?'<span class="vid">▶ 0:'+(10+p.id%50)+'</span>':''}<span class="sz">${p.sz}</span></div>`});
+    h+='</div>';
+  });
+  $('#timeline').innerHTML=h||'<div class="empty">Nothing here yet ✨<br>Try another filter or upload something.</div>';
+}
+render();
+
+$('#timeline').addEventListener('click',e=>{
+  const el=e.target.closest('.ph');if(!el)return;const pid=+el.dataset.id;
+  if(e.target.closest('.sel')||picked.size){picked.has(pid)?picked.delete(pid):picked.add(pid);el.classList.toggle('picked');upd();return}
+  cur=view.findIndex(p=>p.id===pid);openLb();
+});
+function upd(){$('#selN').textContent=picked.size+' selected';$('#selbar').classList.toggle('show',picked.size>0)}
+function clearSel(){picked.clear();render();upd()}
+function act(m){toast(m+' · '+picked.size+' item'+(picked.size>1?'s':''));if(m.includes('trash')){const rm=photos.filter(p=>picked.has(p.id));rm.forEach(p=>photos.splice(photos.indexOf(p),1))}clearSel()}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2200)}
+
+// lightbox
+function openLb(){const p=view[cur];$('#lbBig').style.background=`linear-gradient(135deg,${p.g[0]},${p.g[1]})`;$('#lbBig').textContent=p.em;$('#lbT').textContent=p.t;$('#lbS').textContent=p.day+' · '+p.sz+(p.vid?' · Video':'');$('#lb').classList.add('open')}
+function closeLb(){$('#lb').classList.remove('open')}
+function step(d){cur=(cur+d+view.length)%view.length;openLb()}
+addEventListener('keydown',e=>{if(!$('#lb').classList.contains('open'))return;if(e.key==='Escape')closeLb();if(e.key==='ArrowRight')step(1);if(e.key==='ArrowLeft')step(-1)});
+$('#lb').addEventListener('click',e=>{if(e.target.id==='lb')closeLb()});
+
+// nav / filters / search
+$('#nav').addEventListener('click',e=>{
+  const a=e.target.closest('a');if(!a)return;
+  document.querySelectorAll('nav a').forEach(x=>x.classList.remove('active'));a.classList.add('active');
+  filter=a.dataset.f;
+  const titles={all:'All photos',fav:'Favorites',video:'Videos',alb:'All photos',share:'Shared with you',trash:'Trash'};
+  $('#secTitle').textContent=titles[filter];
+  if(filter==='alb')document.getElementById('albSec').scrollIntoView({behavior:'smooth'});
+  if(filter==='alb')filter='all';
+  render();
+});
+$('#chips').addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;document.querySelectorAll('#chips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');cat=c.dataset.c;render()});
+$('#q').addEventListener('input',e=>{query=e.target.value;render()});
+$('#theme').onclick=()=>{const r=document.documentElement;r.dataset.theme=r.dataset.theme==='light'?'dark':'light'};
+function upload(){const i=document.createElement('input');i.type='file';i.multiple=true;i.accept='image/*,video/*';i.onchange=()=>{const f=[...i.files];if(!f.length)return;f.forEach(file=>{const g=grads[Math.floor(Math.random()*grads.length)];photos.unshift({id:id++,day:'Today',em:file.type.startsWith('video')?'🎞️':'🖼️',t:file.name,g,sz:(file.size/1048576).toFixed(1)+' MB',vid:file.type.startsWith('video'),fav:false,shape:''})});render();toast('Uploaded '+f.length+' file'+(f.length>1?'s':''))};i.click()}
+</script>
 </body>
 </html>
